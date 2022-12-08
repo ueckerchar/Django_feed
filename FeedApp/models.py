@@ -20,7 +20,7 @@ class Profile(models.Model):
         return f"{self.user.username}"
 
 STATUS_CHOICES = (
-    ('sent','sent'),
+    ('send','send'),
     ('accepted','accepted')
 )
 
