@@ -57,7 +57,7 @@ def friendsfeed(request):
     comment_count_list = []
     like_count_list = []
     friends = Profile.objects.filter(user=request.user).values('friends')
-    posts = Post.objects.filter(username=request.user).order_by('-date_posted')
+    posts = Post.objects.filter(username__in=friends).order_by('-date_posted')
     for p in posts:
         c_count = Comment.objects.filter(post=p).count()
         l_count = Like.objects.filter(post=p).count()
@@ -69,7 +69,7 @@ def friendsfeed(request):
         post_to_like = request.POST.get("like")
         print(post_to_like)
         like_already_exists = Like.objects.filter(post_id=post_to_like,username=request.user)
-        if not like_already_exists():
+        if not like_already_exists.exists():
             Like.objects.create(post_id=post_to_like,username=request.user)
             return redirect("FeedApp:friendsfeed")
 
@@ -130,7 +130,7 @@ def friends(request):
         return redirect('FeedApp:friends')
 
     if request.method == 'POST' and request.POST.get("receive_requests"):
-        senders = request.POST.getlist("friend_requests")
+        senders = request.POST.getlist("receive_requests")
         for sender in senders:
             Relationship.objects.filter(id=sender).update(status='accepted')
 
